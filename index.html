@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Pesta Barbie-ku!</title>
+    <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter untuk teks -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            overflow: hidden; /* Mencegah scroll yang tidak diinginkan */
+            background-image: url('BG2.png'); /* Mengganti latar belakang dengan gambar BG2 */
+            background-size: cover; /* Membuat gambar memenuhi seluruh layar */
+            background-position: center; /* Memusatkan gambar */
+            font-family: 'Inter', sans-serif;
+            color: #4A003D; /* Warna teks yang lebih gelap */
+            cursor: pointer; /* Mengganti kursor menjadi pointer */
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.6); /* Transparansi untuk efek elegan */
+            padding: 3rem; /* 48px */
+            border-radius: 2rem; /* 32px */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 90%;
+            width: 600px; /* Lebar lebih besar untuk konten */
+            position: relative;
+            overflow: hidden;
+            border: 6px solid #FF69B4; /* Border tebal ala Barbie */
+        }
+
+        h1, h2 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Bayangan teks */
+        }
+
+        /* Gaya khusus untuk tombol */
+        .btn {
+            background-image: linear-gradient(to right, #FF69B4, #FF1493); /* Gradien tombol */
+            color: white;
+            padding: 0.75rem 1.5rem; /* 12px 24px */
+            border-radius: 9999px; /* Full rounded */
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 20, 147, 0.4);
+            border: 2px solid #C20070; /* Border lebih gelap */
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn:hover {
+            background-image: linear-gradient(to right, #C20070, #FF1493); /* Gradien hover */
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(255, 20, 147, 0.6);
+        }
+
+        .btn:disabled {
+            background-color: #FFC0CB; /* Light pink when disabled */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            border-color: #FF80AB;
+        }
+
+        .btn-option {
+            background-color: #F8BBD0; /* Light pink */
+            color: #4A003D; /* Dark purple/pink text */
+            border: 2px solid #FF80AB; /* Pink border */
+            width: 100%;
+            margin-bottom: 0.75rem; /* 12px */
+            padding: 0.75rem 1rem; /* 12px 16px */
+            border-radius: 0.75rem; /* 12px */
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-option:hover {
+            background-color: #FF80AB; /* Medium pink on hover */
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-option.selected {
+            background-color: #FF1493; /* Selected option */
+            color: white;
+            border-color: #C20070;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Gaya untuk modal pesan */
+        .message-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #FFFFFF;
+            padding: 2rem; /* 32px */
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            animation: bounceIn 0.6s forwards;
+            border: 4px solid #F06292; /* Border modal */
+        }
+
+        .modal-content.success {
+            background-color: #E8F5E9; /* Greenish for success */
+            color: #2E7D32; /* Darker green */
+            border-color: #66BB6A;
+        }
+
+        .modal-content.error {
+            background-color: #FFEBEE; /* Reddish for error */
+            color: #C62828; /* Darker red */
+            border-color: #EF5350;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Animasi confetti */
+        .confetti-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #FFC0CB; /* Pink */
+            opacity: 0;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(2n) { background-color: #ADD8E6; /* Light Blue */ }
+        .confetti:nth-child(3n) { background-color: #FFFF00; /* Yellow */ }
+        .confetti:nth-child(4n) { background-color: #90EE90; /* Light Green */ }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+                @keyframes confetti-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Animasi glitter */
+        .glitter-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .glitter {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: glitter-animation 3s infinite ease-in-out;
+        }
+
+        @keyframes glitter-animation {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-50px) scale(1.5);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Gaya spesifik untuk Safe Puzzle */
+        .pin-input-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem; /* 8px */
+            margin-bottom: 2rem;
+        }
+        .pin-input {
+            width: 3rem; /* 48px */
+            height: 3.5rem; /* 56px */
+            font-size: 2rem; /* 32px */
+            text-align: center;
+            border: 2px solid #FF80AB;
+            border-radius: 0.5rem; /* 8px */
+            background-color: #FCE4EC; /* Lightest pink */
+            color: #4A003D;
+            font-weight: bold;
+        }
+        .pin-input:focus {
+            outline: none;
+            border-color: #FF1493;
+            box-shadow: 0 0 0 3px rgba(255, 20, 147, 0.3);
+        }
+
+        /* Gaya spesifik untuk Archery Game */
+        .archery-targets {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .target {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, white 0%, #FFD1DC 30%, #FFB6C1 60%, #FF1493 100%);
+            border: 3px solid #C20070;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #C20070;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .target:hover:not(.hit) {
+            transform: scale(1.08);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .target.hit {
+            background: radial-gradient(circle at center, #c03cb7 0%, #ef64b0 100%); /* Purple when hit */
+            border-color: #682268;
+            cursor: default;
+            color: white;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            animation: targetHit 0.5s forwards;
+        }
+
+        @keyframes targetHit {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Gaya spesifik untuk Trap Click */
+        .moveButton {
+            background-image: url('trapbutton.png'); /* Mengganti latar belakang dengan gambar trapbutton */
+            background-size: cover; /* Membuat gambar memenuhi tombol */
+            background-position: center; /* Memusatkan gambar */
+            border: none; /* Menghapus border */
+            border-radius: 100%; /* Membuat tombol berbentuk lingkaran */
+            width: 250px; /* Ukuran tombol jebakan */
+            height: 250px; /* Ukuran tombol jebakan */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Latar belakang khusus untuk halaman brankas */
+        #safe-puzzle-screen {
+            background-image: url('BG4.jpg'); 
+            background-size: cover;
+            background-position: center;
+            border-radius: 2rem; 
+            padding: 2rem; 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Latar belakang khusus untuk halaman archery */
+        #archery-game-screen {
+            background-image: url('BG8.jpg'); 
+            background-size: cover;
+            background-position: center;
+            border-radius: 2rem; 
+            padding: 2rem; 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Latar belakang khusus untuk halaman trap click */
+        #trap-click-screen {
+            background-image: url('BG10.jpg'); 
+            background-size: cover;
+            background-position: center;
+            border-radius: 2rem; 
+            padding: 2rem; 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        #moveButton {
+            position: fixed; /* Ubah dari absolute ke fixed agar berada di luar container */
+            top: 50%; /* Posisi awal di tengah layar */
+            left: 50%;
+            transform: translate(-50%, -50%); /* Pusatkan tombol */
+            padding: 20px 30px;
+            font-size: 24px;
+            cursor: pointer;
+            background-image: url('trapbutton.png'); /* Mengganti latar belakang dengan gambar trapbutton */
+            background-size: cover; /* Membuat gambar memenuhi tombol */
+            background-position: center; /* Memusatkan gambar */
+            border: none; /* Menghapus border */
+            border-radius: 100%; /* Membuat tombol berbentuk lingkaran */
+            width: 250px; /* Ukuran tombol jebakan */
+            height: 250px; /* Ukuran tombol jebakan */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div class="container relative">
+        <!-- Confetti Container (hidden by default) -->
+        <div id="confetti-container" class="confetti-container hidden"></div>
+
+        <!-- Glitter Container (hidden by default) -->
+        <div class="glitter-container">
+            <!-- Menambahkan beberapa elemen glitter -->
+            <div class="glitter" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+            <div class="glitter" style="top: 30%; left: 50%; animation-delay: 0.5s;"></div>
+            <div class="glitter" style="top: 50%; left: 70%; animation-delay: 1s;"></div>
+            <div class="glitter" style="top: 70%; left: 40%; animation-delay: 1.5s;"></div>
+            <div class="glitter" style="top: 90%; left: 60%; animation-delay: 2s;"></div>
+        </div>
+
+        <!-- Halaman Selamat Datang / Game Intro -->
+        <div id="welcome-screen">
+            <img src="barbie.logo.png" alt="Barbie Logo" class="mx-auto mb-6 rounded-full shadow-lg border-4 border-pink-400" style="width: 150px; height: 150px;">
+            <h1 class="text-4xl font-extrabold text-pink-600 mb-4 tracking-wide">💖✨ Hiiiii Sweetheart! ✨💖</h1>
+            <p class="text-gray-700 mb-8 text-lg leading-relaxed">
+                <strong>OMG! You’re officially invited to the most FABULOUS birthday dinner EVER! 🎂💅<br>
+                But hold up! 🛑 Before you get your oh-so-glamorous invite...<br>
+                You’ve gotta pass a little test to prove how well you really know me, the birthday queen! 💕🎀<br>
+                Let’s see if you’re BFF material or just another glitter faker~ 😘✨</strong>
+            </p>
+            <button id="start-game-btn" class="btn">
+                Let's Start the Game! 🎉
+            </button>
+        </div>
+
+        <!-- Sesi 1: Teka-Teki Brankas (PIN Ulang Tahun) -->
+        <div id="safe-puzzle-screen" class="hidden">
+            <h2 class="text-3xl font-bold text-pink-600 mb-6">Mission 1: Crack the Secret Safe! 🔐💖</h2>
+            <p class="text-xl text-gray-800 mb-8 font-medium leading-relaxed">
+                <strong>This fabulous safe is hiding my VIP invite! 💌✨ Enter the secret 6-digit PIN to unlock it.  
+                Hint: Think... Brojol 😜🔍</strong>
+            </p>
+            <div class="pin-input-group">
+                <input type="number" class="pin-input" id="pin-1" maxlength="1" min="0" max="9">
+                <input type="number" class="pin-input" id="pin-2" maxlength="1" min="0" max="9">
+                <input type="number" class="pin-input" id="pin-3" maxlength="1" min="0" max="9">
+                <input type="number" class="pin-input" id="pin-4" maxlength="1" min="0" max="9">
+                <input type="number" class="pin-input" id="pin-5" maxlength="1" min="0" max="9">
+                <input type="number" class="pin-input" id="pin-6" maxlength="1" min="0" max="9">
+            </div>
+            <button id="check-pin-btn" class="btn w-full">
+                Unlock the Glam Vault! 💎
+            </button>
+        </div>
+
+        <!-- Sesi 2: Permainan Panahan (Teka-Teki Pribadi) -->
+        <div id="archery-game-screen" class="hidden">
+            <h2 class="text-3xl font-bold text-pink-600 mb-6">Mission 2: The Knowledge Buttons! 💡💋</h2>
+            <p id="archery-instruction" class="text-xl text-gray-800 mb-8 font-medium leading-relaxed">
+                <strong>Okay, cutie! 💅 There are 3 mysterious buttons standing between you and my ultra-exclusive birthday bash 🎉  
+                Tap-tap-tap each button and prove you know the real me, the one and only birthday Queen! 💖 </strong>
+                (<span id="targets-hit-count">0</span> of 3 secrets revealed 🎯)
+            </p>
+            <div class="archery-targets">
+                <div class="target" id="target-1">1</div>
+                <div class="target" id="target-2">2</div>
+                <div class="target" id="target-3">3</div>
+            </div>
+            <button id="archery-next-btn" class="btn w-full">
+                💖 Let’s Slay the Next Mission! ➡️
+            </button>
+        </div>
+
+        <!-- Sesi 3: Klik Jebakan -->
+        <div id="trap-click-screen" class="hidden">
+            <h2 class="text-3xl font-bold text-pink-600 mb-6">Mission 3: The Invitation Trap!</h2>
+            <p class="text-xl text-gray-800 mb-8 font-medium leading-relaxed">
+            <strong>My fabulous party invitation is hidden behind this sparkly trap!</strong>   
+            Click the button <span id="click-count-display">0</span> more times to unlock it!
+            </p>
+            <button id="moveButton"></button>
+        </div>
+
+        <!-- Halaman Kartu Undangan -->
+        <div id="invitation-screen" class="hidden">
+            <h2 class="text-4xl font-extrabold text-pink-600 mb-4 tracking-wide">🎉 You Did It! The Invite is UNLOCKED! 💌✨</h2>
+            <p class="text-gray-700 mb-8 text-xl leading-relaxed">
+                Welcome to the most fabulous party in the entire Barbieverse! 💖👑 Let’s sparkle all night long!
+            </p>
+
+            <div class="bg-pink-100 p-6 rounded-lg mb-8 border-4 border-pink-300 shadow-inner">
+                <p class="text-pink-700 text-2xl font-bold mb-4">PINK'S BIRTHDAY DINNER 🎂💖</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <p class="text-gray-800 text-lg"><strong class="text-pink-600">📅 Date:</strong> June 20th</p>
+                    <p class="text-gray-800 text-lg"><strong class="text-pink-600">⏰ Time:</strong> 17.00 - end</p>
+                    <p class="text-gray-800 text-lg col-span-full"><strong class="text-pink-600">📍 Location:</strong>Bruno Cafe In The Park, Pasar Minggu - Jakarta</p>
+                    <a href="https://www.google.com/maps/place/BRUNO+Cafe+in+the+Park/@-6.2906555,106.8201209,17.23z/data=!4m6!3m5!1s0x2e69f3ab5ef391ad:0x109715d25f86f4c7!8m2!3d-6.2888821!4d106.8235973!16s%2Fg%2F11jny24d73?entry=ttu&g_ep=EgoyMDI1MDYwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="text-blue-500 hover:underline text-lg col-span-full">Open in Google Maps</a>
+                </div>
+                <p class="text-gray-800 text-lg mt-4"><strong class="text-pink-600">👗 Dress Code:</strong> Dress like your fave Barbie or Ken —> pink, glitter, glam, andeverything fab!</p>
+            </div>
+
+            <p class="text-gray-700 mb-6 text-lg italic">So excited to celebrate with you! Your presence will make my birthday extra fab! 💃🌟</p>
+
+            <button onclick="downloadInvitationCard()" class="btn">
+                Download Invitation Card
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Pesan (Sukses/Gagal/Teka-Teki Archery) -->
+    <div id="message-modal" class="message-modal hidden">
+        <div id="modal-content" class="modal-content">
+            <p id="modal-message" class="text-xl font-semibold mb-4"></p>
+            <div id="modal-riddle-options" class="flex flex-col gap-3 mb-4 hidden">
+                <!-- Pilihan jawaban teka-teki panahan akan masuk di sini -->
+            </div>
+            <button id="modal-action-btn" class="btn px-6 py-2">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Mengambil elemen HTML
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const safePuzzleScreen = document.getElementById('safe-puzzle-screen');
+        const archeryGameScreen = document.getElementById('archery-game-screen');
+        const trapClickScreen = document.getElementById('trap-click-screen');
+        const invitationScreen = document.getElementById('invitation-screen');
+
+        const startGameBtn = document.getElementById('start-game-btn');
+
+        // Sesi 1: Brankas
+        const pinInputs = Array.from({ length: 6 }, (_, i) => document.getElementById(`pin-${i + 1}`));
+        const checkPinBtn = document.getElementById('check-pin-btn');
+        // Ganti dengan ulang tahun Anda (DDMMYY)
+        const CORRECT_PIN = "200604"; // Contoh: 09 Maret 1995
+
+        // Sesi 2: Panahan
+        const targets = [
+            document.getElementById('target-1'),
+            document.getElementById('target-2'),
+            document.getElementById('target-3')
+        ];
+        const targetsHitCountDisplay = document.getElementById('targets-hit-count');
+        const archeryNextBtn = document.getElementById('archery-next-btn');
+        let targetsHit = [false, false, false]; // Melacak target yang sudah dipanah
+        let correctArcheryAnswers = 0; // Melacak jumlah jawaban benar dari teka-teki panahan
+        let currentArcheryQuestionIndex = -1; // Indeks pertanyaan yang sedang ditampilkan di modal
+
+        // Sesi 3: Jebakan Klik
+        const trapButton = document.getElementById('moveButton');
+        const clickCountDisplay = document.getElementById('click-count-display');
+        const REQUIRED_CLICKS = 10; // Jumlah klik yang dibutuhkan
+        let trapClicks = 0;
+
+        // Modal Pesan
+        const messageModal = document.getElementById('message-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalMessage = document.getElementById('modal-message');
+        const modalActionBtn = document.getElementById('modal-action-btn');
+        const modalRiddleOptions = document.getElementById('modal-riddle-options');
+
+        const confettiContainer = document.getElementById('confetti-container');
+
+        // --- Atur Teka-Teki Panahan Anda di Sini! ---
+        // Ini adalah pertanyaan yang akan muncul saat target panahan dipanah
+        const archeryQuestions = [
+            {
+                question: "What’s my FAVE color that totally describe me? 💅🌈",
+                options: ["Black & Pink", "Black & White", "Rainbow", "Pink & White"],
+                correctAnswerIndex: 1 // Black & White
+            },
+            {
+                question: "Which juicy fruit makes me go OMG yummm every single time? 🍓✨",
+                options: ["Strawberry", "Mango", "Pineapple", "Starfruit"],
+                correctAnswerIndex: 2 // Pineapple
+            },
+            {
+                question: "Guess who’s the real-life Ken in my Barbie world? 💕👱‍♂️",
+                options: ["Gojo Satoru", "Rafayel", "Pineapple", "Chanyeol"],
+                correctAnswerIndex: [0, 1, 2, 3] // Semua jawaban benar
+            }
+        ];
+
+        // --- Fungsi Utama Navigasi Layar ---
+        function showScreen(screenId) {
+            welcomeScreen.classList.add('hidden');
+            safePuzzleScreen.classList.add('hidden');
+            archeryGameScreen.classList.add('hidden');
+            trapClickScreen.classList.add('hidden');
+            invitationScreen.classList.add('hidden');
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        // --- Sesi 1: Brankas ---
+        function setupSafePuzzle() {
+            pinInputs.forEach((input, index) => {
+                input.value = ''; // Kosongkan input
+                input.addEventListener('input', (event) => {
+                    // Batasi input hanya 1 digit
+                    if (event.target.value.length > 1) {
+                        event.target.value = event.target.value.slice(0, 1);
+                    }
+                    // Pindah fokus ke input berikutnya
+                    if (event.target.value.length === 1 && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                });
+                input.addEventListener('keydown', (event) => {
+                    // Pindah fokus ke input sebelumnya saat backspace
+                    if (event.key === 'Backspace' && event.target.value === '' && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+            pinInputs[0].focus(); // Fokus ke input pertama saat layar muncul
+        }
+
+        function checkSafePin() {
+            const enteredPin = pinInputs.map(input => input.value).join('');
+            if (enteredPin === CORRECT_PIN) {
+                showMessage('success', 'Yaaas, Queen! 💃✨ The Glam Vault is UNLOCKED! 💎  You totally slayed it! Now let’s sparkle on to the next fab mission! 💖🚀', () => {
+                    showScreen('archery-game-screen');
+                    setupArcheryGame();
+                });
+            } else {
+                showMessage('error', 'Oopsie, that’s not it! 😬🔒 Try again! you got this, sparkle star! 🌟💪');
+                pinInputs.forEach(input => input.value = ''); // Kosongkan semua input
+                pinInputs[0].focus();
+            }
+        }
+
+        // --- Sesi 2: Panahan ---
+        function setupArcheryGame() {
+            targets.forEach((target, index) => {
+                target.classList.remove('hit'); // Reset hit status
+                target.textContent = index + 1; // Tampilkan nomor target
+                target.onclick = () => handleTargetClick(index); // Tambahkan event listener
+            });
+            targetsHit = [false, false, false];
+            correctArcheryAnswers = 0;
+            updateTargetsHitCount();
+            archeryNextBtn.disabled = true; // Nonaktifkan tombol lanjut
+            document.getElementById('archery-instruction').textContent = 'Okay, cutie! 💅 There are 3 mysterious buttons standing between you and my ultra-exclusive birthday bash 🎉 Tap-tap-tap each button and prove you know the real me! 💖 ';
+        }
+
+        function handleTargetClick(targetIndex) {
+            if (targetsHit[targetIndex]) {
+                // Target sudah dipanah, jangan lakukan apa-apa
+                showMessage('error', 'Oops! 💘 You have already hit this one, Try a different fab button! 🎯✨');
+                return;
+            }
+
+            targets[targetIndex].classList.add('hit'); // Tandai target sebagai "hit"
+            targetsHit[targetIndex] = true; // Perbarui status hit
+            updateTargetsHitCount();
+
+            // Tampilkan pertanyaan terkait target
+            currentArcheryQuestionIndex = targetIndex;
+            const questionData = archeryQuestions[targetIndex];
+            displayArcheryQuestionInModal(questionData);
+        }
+
+        function displayArcheryQuestionInModal(questionData) {
+            modalMessage.textContent = questionData.question;
+            modalContent.classList.remove('success', 'error');
+            modalRiddleOptions.innerHTML = ''; // Kosongkan pilihan sebelumnya
+            modalRiddleOptions.classList.remove('hidden'); // Tampilkan div pilihan
+
+            let selectedOptions = []; // Array untuk menyimpan jawaban yang dipilih
+
+            questionData.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('btn-option');
+                button.addEventListener('click', () => {
+                    if (selectedOptions.includes(index)) {
+                        // Jika sudah dipilih, hapus dari array dan hilangkan kelas 'selected'
+                        selectedOptions = selectedOptions.filter(opt => opt !== index);
+                        button.classList.remove('selected');
+                    } else {
+                        // Tambahkan ke array dan tambahkan kelas 'selected'
+                        selectedOptions.push(index);
+                        button.classList.add('selected');
+                    }
+                });
+                modalRiddleOptions.appendChild(button);
+            });
+
+            modalActionBtn.textContent = "Submit Answers";
+            modalActionBtn.onclick = () => {
+                if (selectedOptions.length === 0) {
+                    modalMessage.textContent = 'Hold up, glam star! 💫 You gotta pick at least one answer before we can sparkle forward! 💖✨';
+                    return;
+                }
+                checkArcheryAnswer(selectedOptions, questionData.correctAnswerIndex);
+            };
+            messageModal.classList.remove('hidden');
+        }
+
+        function checkArcheryAnswer(selected, correct) {
+            if (Array.isArray(correct)) {
+                // Jika jawaban benar adalah array, periksa apakah semua jawaban benar dipilih
+                const isCorrect = correct.every(ans => selected.includes(ans)) && selected.every(ans => correct.includes(ans));
+                if (isCorrect) {
+                    correctArcheryAnswers++;
+                    showMessage('success', 'Yaaas, bestie! 💘 You are totally in the know, my sparkle secrets are safe with you! ✨🎯', () => {
+                        messageModal.classList.add('hidden');
+                        modalRiddleOptions.classList.add('hidden');
+                        currentArcheryQuestionIndex = -1;
+                        checkArcheryGameCompletion();
+                    });
+                } else {
+                    showMessage('error', 'Oopsie-daisy! 💔 That wasn’t quite it, but don’t give up, my glam archer! 🎀 Try another target!', () => {
+                        messageModal.classList.add('hidden');
+                        modalRiddleOptions.classList.add('hidden');
+                        currentArcheryQuestionIndex = -1;
+                        checkArcheryGameCompletion();
+                    });
+                }
+            } else {
+                // Jika jawaban benar adalah satu indeks, gunakan logika lama
+                const isCorrect = selected.length === 1 && selected[0] === correct;
+                if (isCorrect) {
+                    correctArcheryAnswers++;
+                    showMessage('success', 'Yaaas, bestie! 💘 You are totally in the know, my sparkle secrets are safe with you! ✨🎯', () => {
+                        messageModal.classList.add('hidden');
+                        modalRiddleOptions.classList.add('hidden');
+                        currentArcheryQuestionIndex = -1;
+                        checkArcheryGameCompletion();
+                    });
+                } else {
+                    showMessage('error', 'Oopsie-daisy! 💔 That wasn’t quite it, but don’t give up, my glam archer! 🎀 Try another target!', () => {
+                        messageModal.classList.add('hidden');
+                        modalRiddleOptions.classList.add('hidden');
+                        currentArcheryQuestionIndex = -1;
+                        checkArcheryGameCompletion();
+                    });
+                }
+            }
+            archeryNextBtn.disabled = false;
+        }
+
+        function updateTargetsHitCount() {
+            const hits = targetsHit.filter(Boolean).length;
+            targetsHitCountDisplay.textContent = hits;
+
+            // Jika semua target sudah dipanah, nyalakan tombol "Next"
+            if (hits === 3) {
+                archeryNextBtn.disabled = false;
+                archeryNextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                archeryNextBtn.textContent = '💖 Let’s Slay the Next Mission! ➡️';
+            } else {
+                archeryNextBtn.disabled = true;
+                archeryNextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                archeryNextBtn.textContent = 'Keep Hitting Those Targets! 🎯';
+            }
+        }
+
+        // --- Sesi 3: Jebakan Klik ---
+        // Fungsi untuk menghasilkan posisi acak di dalam layar
+        function getRandomPosition() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const buttonSize = 150; // Ukuran tombol, sesuaikan dengan CSS #moveButton width/height
+
+            // Pastikan tombol tidak keluar dari batas layar
+            const randomX = Math.random() * (screenWidth - buttonSize);
+            const randomY = Math.random() * (screenHeight - buttonSize);
+
+            return { x: randomX, y: randomY };
+        }
+
+        // Dapatkan elemen tombol
+        const moveButton = document.getElementById('moveButton');
+
+        // Tambahkan event listener untuk klik pada tombol
+        moveButton.addEventListener('click',  () => {
+            const newPosition = getRandomPosition();
+            moveButton.style.left = `${newPosition.x}px`;
+            moveButton.style.top = `${newPosition.y}px`;
+        });
+
+        // Setel posisi awal tombol secara acak saat halaman dimuat
+        window.addEventListener('load', () => {
+            const initialPosition = getRandomPosition();
+            moveButton.style.left = `${initialPosition.x}px`;
+            moveButton.style.top = `${initialPosition.y}px`;
+        });
+
+        // Sesuaikan posisi tombol jika ukuran jendela berubah
+        window.addEventListener('resize', () => {
+            const currentLeft = parseInt(moveButton.style.left);
+            const currentTop = parseInt(moveButton.style.top);
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const buttonSize = 150;
+
+            // Jika tombol berada di luar batas baru setelah resize, pindahkan ke posisi acak baru
+            if (currentLeft + buttonSize > screenWidth || currentTop + buttonSize > screenHeight || currentLeft < 0 || currentTop < 0) {
+                const newPosition = getRandomPosition();
+                moveButton.style.left = `${newPosition.x}px`;
+                moveButton.style.top = `${newPosition.y}px`;
+            }
+        });
+
+        function setupTrapClickGame() {
+            trapClicks = 0;
+            clickCountDisplay.textContent = REQUIRED_CLICKS;
+        }
+
+        function handleTrapClick() {
+            trapClicks++;
+            const remainingClicks = REQUIRED_CLICKS - trapClicks;
+            clickCountDisplay.textContent = remainingClicks > 0 ? remainingClicks : 0;
+
+            if (trapClicks >= REQUIRED_CLICKS) {
+                showMessage('success', 'You did it! 💅✨ The invitation is officially unlocked!', () => {
+                    showInvitation();
+                });
+            }
+        }
+
+        // --- Fungsi Modal Umum ---
+        function showMessage(type, message, callback = () => {}) {
+            modalMessage.textContent = message;
+            modalContent.classList.remove('success', 'error');
+            modalContent.classList.add(type);
+            modalRiddleOptions.classList.add('hidden'); // Pastikan opsi teka-teki tersembunyi secara default
+            modalActionBtn.textContent = "OK"; // Default text for general message
+            messageModal.classList.remove('hidden');
+
+            modalActionBtn.onclick = () => {
+                messageModal.classList.add('hidden');
+                callback(); // Panggil callback setelah modal ditutup
+            };
+        }
+
+        // --- Fungsi Tampilkan Undangan ---
+        function showInvitation() {
+            showScreen('invitation-screen');
+            // Mulai confetti saat undangan muncul
+            confettiContainer.classList.remove('hidden');
+            createConfetti(); // Generate confetti
+        }
+
+        // --- Fungsi untuk Animasi Confetti ---
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 75%)`; // Warna acak
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
+        // --- Event Listeners ---
+        startGameBtn.addEventListener('click', () => {
+            showScreen('safe-puzzle-screen');
+            setupSafePuzzle();
+        });
+
+        checkPinBtn.addEventListener('click', checkSafePin);
+
+        // Tambahkan event listener untuk memindahkan fokus input PIN
+        pinInputs.forEach((input, index) => {
+            input.addEventListener('input', (event) => {
+                if (event.target.value.length === 1 && index < pinInputs.length - 1) {
+                    pinInputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace' && event.target.value === '' && index > 0) {
+                    pinInputs[index - 1].focus();
+                }
+            });
+        });
+
+        archeryNextBtn.addEventListener('click', () => {
+            showScreen('trap-click-screen');
+            setupTrapClickGame();
+        });
+
+        trapButton.addEventListener('click', handleTrapClick);
+
+        // Fungsi untuk mengunduh kartu undangan
+        function downloadInvitationCard() {
+            const link = document.createElement('a');
+            link.href = 'myinvcard.png';
+            link.download = 'Invitation_Card.png';
+            link.click();
+        }
+
+        // Initial setup: show welcome screen
+        showScreen('welcome-screen');
+    </script>
+</body>
+</html>
